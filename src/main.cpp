@@ -1,7 +1,4 @@
-#include <GL/gl.h>
-#include <GLFW/glfw3.h>
-#include <cstdlib>
-#include <iostream>
+#include <core.hpp>
 
 int main(){
  if(!glfwInit()){ 
@@ -11,6 +8,8 @@ int main(){
  else {
   std::cout << "GLFW Initialized sucessufully\n";
  }
+
+
   GLFWwindow* window = glfwCreateWindow(800,600,"Test",NULL,NULL);
 
 
@@ -29,21 +28,10 @@ int main(){
    glClear(GL_COLOR_BUFFER_BIT);
    
    glClearColor(0.1f,0.1f,0.1f,1.0f);
+   glColor3f(0.0f,1.0f,0.0f);
    
-  glColor3f(0.0f,1.0f,0.0f);
-   glBegin(GL_QUADS);
-   glVertex2f(-0.5f,-0.5f); //bottom-left
-   glVertex2f(0.5f,-0.5f); //bottom-right
-   glVertex2f(0.5f,0.5f); //top-right
-   glVertex2f(-0.5f,0.5f);  //top-left
-   glEnd();
-   
-   glColor3f(0.0f,-0.5f,0.0f);
-   glBegin(GL_TRIANGLES);
-   glVertex2f(0.0f,0.5f);
-   glVertex2f(-0.5f,-0.5f);
-   glVertex2f(0.5f,-0.5f);
-    glEnd();
+   Core::drawGeometrie();
+
    glfwSwapBuffers(window);
  
    glfwPollEvents();
