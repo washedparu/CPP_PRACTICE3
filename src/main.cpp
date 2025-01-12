@@ -1,28 +1,37 @@
 #include <core.hpp>
 
 int main(){
+
  if(!glfwInit()){ 
-   std::cout << "Failed Intiailizing GLFW.\n";
+   spdlog::error<const char*>("Failed Intiailizing GLFW.\n");
    return EXIT_FAILURE;
  }
  else {
-  std::cout << "GLFW Initialized sucessufully\n";
+  spdlog::info<const char*>("GLFW Initialized sucessufully\n");
  }
 
 
   GLFWwindow* window = glfwCreateWindow(800,600,"Test",NULL,NULL);
 
-
+ 
   if(!window){
      glfwTerminate();
-     std::cerr << "Couldn't create window!\nExiting..\n";
+     spdlog::error<const char*>("Couldn't create window!\n");
      return EXIT_SUCCESS;
   }
   else{
-    std::cout << "Created window Sucessfully\n";
+   spdlog::info<const char*>("Created window successfully\n");
   }
 
   glfwMakeContextCurrent(window);
+  
+  if(glewInit() != GLEW_OK){
+    spdlog::error<const char*>("Couldn't initialize GLEW!\n");
+    return EXIT_FAILURE;
+  }
+  else{
+     spdlog::info<const char*>("GLEW Initialized successfully!");
+  }
 
   while (!glfwWindowShouldClose(window)) { 
    glClear(GL_COLOR_BUFFER_BIT);

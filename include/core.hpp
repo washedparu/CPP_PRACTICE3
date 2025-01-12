@@ -1,7 +1,8 @@
 #pragma once
 // includes
-#include <GL/gl.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <spdlog/spdlog.h>
 #include <iostream>
 
 // core namespace
