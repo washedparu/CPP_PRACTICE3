@@ -1,27 +1,23 @@
-#pragma once
-// includes
+#ifndef CORE_HPP
+#define CORE_HPP
+
+
+// Includes
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <spdlog/spdlog.h>
 #include <iostream>
+#include <cstdlib> 
 
-// core namespace
+namespace Core {
+    // Initialize the application
+    bool Init();
 
-namespace Core
-{
-    void drawGeometrie(){
-        glBegin(GL_QUADS);
-            glVertex2f(-0.5f,-0.5f); 
-            glVertex2f(0.5f,-0.5f); 
-            glVertex2f(0.5f,0.5f); 
-            glVertex2f(-0.5f,0.5f);  
-             glEnd();
-   
-            glColor3f(0.0f,-0.5f,0.0f);
-            glBegin(GL_TRIANGLES);
-            glVertex2f(0.0f,0.5f);
-            glVertex2f(-0.5f,-0.5f);
-            glVertex2f(0.5f,-0.5f);
-        glEnd();
-    }
-} 
+    // Run the main loop
+    void Run();
+
+    // Function for drawing geometry
+    void drawGeometrie();
+}
+
+#endif // CORE_HPP
