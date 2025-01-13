@@ -1,11 +1,15 @@
 #include <core.hpp>
 
 int main() {
-    if (!Core::Init(800,600,"OpenGL",NULL,NULL)) {
-        return  EXIT_SUCCESS;
-    }
+    using namespace Core;
 
-    Core::Run();
 
+   auto engine = std::make_unique<Engine>();
+
+
+    if(!engine->Init(800,600,"OpenGL",NULL,NULL)) 
+        return -1;
+        
+    engine->Run();
     return EXIT_SUCCESS;
 }

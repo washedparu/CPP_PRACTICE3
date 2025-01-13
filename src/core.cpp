@@ -1,83 +1,101 @@
 #include "core.hpp"
 
 namespace Core {
+    GLFWwindow* Engine::m_Window = nullptr; // Fixed missing Engine:: scope for m_Window
+    std::vector<float> vertices;
 
-// Global variables for GLFW window
-GLFWwindow* window = nullptr;
+    
+    // Initialize the application
+    bool Engine::Init(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* shared) {
+        // Initialize GLFW
+        if (!glfwInit()) {
+            ERROR("Failed initializing GLFW.");
+            return false;
+        }
+        INFO("GLFW initialized successfully.");
 
-// Initialize the application
-bool Init(int width ,int height, const char* title, GLFWmonitor *monitor,GLFWwindow *shared) {
-    // Initialize GLFW
-    if (!glfwInit()) {
-        spdlog::error("Failed initializing GLFW.");
-        return false;
+        // Create a window
+        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+        glfwWindowHint(GLFW_ACCUM_RED_BITS, GLFW_DONT_CARE); // Fixed invalid hint value
+
+        m_Window = glfwCreateWindow(width, height, title, monitor, shared);
+
+        if (!m_Window) {
+            glfwTerminate();
+            ERROR("Couldn't create window!");
+            return false;
+        }
+        INFO("Created window successfully.");
+
+        glfwMakeContextCurrent(m_Window);
+
+        // Initialize GLEW
+        glewExperimental = GL_TRUE; // Required for core profile compatibility
+        if (glewInit() != GLEW_OK) {
+            ERROR("Couldn't initialize GLEW!");
+            glfwDestroyWindow(m_Window); // Clean up resources
+            glfwTerminate();
+            return false;
+        }
+        INFO("GLEW initialized successfully!");
+
+        return true;
     }
-    spdlog::info("GLFW initialized successfully.");
 
-    // Create a window
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); 
-    glfwWindowHint(GLFW_ACCUM_RED_BITS, GL_TRUE);
-    window = glfwCreateWindow(width,height,title, monitor, shared);
-    if (!window) {
+    // Draw geometries
+    void Engine::DrawGeometrie() { // Fixed method signature and moved outside of Run
+        // Draw a quad
+        glDrawArrays(GL_QUADS,0,4);
+    }
+
+    // Run the main loop
+    void Engine::Run() {
+        if (!m_Window) {
+            ERROR("Window is not initialized. Call Core::Init() first.");
+            return;
+        }
+
+        // Print out GL Version
+        INFO("GL version: {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+
+        vertices.reserve(3 * 8);
+
+
+        vertices.insert(vertices.end(), {
+            -0.5f, -0.5f,
+             0.5f, -0.5f,
+             0.5f,  0.5f,
+            -0.5f,  0.5f
+        });
+
+        uint32_t buffer;        
+        glGenBuffers(1, &buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, vertices.data(), GL_STATIC_DRAW);
+        
+
+
+        while (!glfwWindowShouldClose(m_Window)) {
+            // Clear the screen
+            glClear(GL_COLOR_BUFFER_BIT);
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+            
+            DrawGeometrie();
+            // Swap buffers and poll events
+            glfwSwapBuffers(m_Window);
+            glfwPollEvents();
+        }
+
+        glfwDestroyWindow(m_Window);
         glfwTerminate();
-        spdlog::error("Couldn't create window!");
-        return false;
     }
-    spdlog::info("Created window successfully.");
 
-    glfwMakeContextCurrent(window);
-
-    // Initialize GLEW
-    if (glewInit() != GLEW_OK) {
-        spdlog::error("Couldn't initialize GLEW!");
-        return false;
+    // Destructor to clean up resources
+    Engine::~Engine() {
+        if (m_Window) {
+            glfwDestroyWindow(m_Window);
+            glfwTerminate();
+        }
     }
-    spdlog::info("GLEW initialized successfully!");
-
-    return true;
 }
-
-// Run the main loop
-void Run() {
-    if (!window) {
-        spdlog::error("Window is not initialized. Call Core::Init() first.");
-        return;
-    }
-
-    while (!glfwWindowShouldClose(window)) {
-        // Clear the screen
-        glClear(GL_COLOR_BUFFER_BIT);
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glColor3f(0.0f, 1.0f, 0.0f);
-
-        // Call the drawGeometrie function
-        drawGeometrie();
-
-        // Swap buffers and poll events
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-
-    glfwTerminate();
-}
-
-// Draw geometry
-void drawGeometrie() {
-    // Draw a quad
-    glBegin(GL_QUADS);
-    glVertex2f(-0.5f, -0.5f);
-    glVertex2f(0.5f, -0.5f);
-    glVertex2f(0.5f, 0.5f);
-    glVertex2f(-0.5f, 0.5f);
-    glEnd();
-
-    // Draw a triangle
-    glColor3f(0.0f, -0.5f, 0.0f);
-    glBegin(GL_TRIANGLES);
-    glVertex2f(0.0f, 0.5f);
-    glVertex2f(-0.5f, -0.5f);
-    glVertex2f(0.5f, -0.5f);
-    glEnd();
-}
-
-} // namespace Core
