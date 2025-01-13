@@ -7,7 +7,7 @@ int main() {
    auto engine = std::make_unique<Engine>();
 
 
-    if(!engine->Init(800,600,"OpenGL",NULL,NULL)) 
+    if(!engine->Init(1000,800,"OpenGL",NULL,NULL)) 
         return -1;
         
     engine->Run();
