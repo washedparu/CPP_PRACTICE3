@@ -6,7 +6,7 @@ namespace Core {
 GLFWwindow* window = nullptr;
 
 // Initialize the application
-bool Init() {
+bool Init(int width ,int height, const char* title, GLFWmonitor *monitor,GLFWwindow *shared) {
     // Initialize GLFW
     if (!glfwInit()) {
         spdlog::error("Failed initializing GLFW.");
@@ -15,7 +15,9 @@ bool Init() {
     spdlog::info("GLFW initialized successfully.");
 
     // Create a window
-    window = glfwCreateWindow(800, 600, "Test", NULL, NULL);
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); 
+    glfwWindowHint(GLFW_ACCUM_RED_BITS, GL_TRUE);
+    window = glfwCreateWindow(width,height,title, monitor, shared);
     if (!window) {
         glfwTerminate();
         spdlog::error("Couldn't create window!");

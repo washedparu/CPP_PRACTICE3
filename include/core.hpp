@@ -11,7 +11,7 @@
 
 namespace Core {
     // Initialize the application
-    bool Init();
+    bool Init(int width ,int height, const char* title, GLFWmonitor *monitor,GLFWwindow *shared);
 
     // Run the main loop
     void Run();

@@ -1,7 +1,7 @@
 #include <core.hpp>
 
 int main() {
-    if (!Core::Init()) {
+    if (!Core::Init(800,600,"OpenGL",NULL,NULL)) {
         return  EXIT_SUCCESS;
     }
 
