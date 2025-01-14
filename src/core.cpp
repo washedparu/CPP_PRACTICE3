@@ -46,19 +46,49 @@ namespace Core {
 
         INFO("GL version: {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 
+        // Cube vertex data (x, y, z)
         static std::vector<float> vertices = {
-            -0.75f, -0.75f,
-             0.75f, -0.75f,
-             0.75f,  0.75f,
-            -0.75f,  0.75f
+            // Front face
+            -0.5f, -0.5f,  0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+            // Back face
+            -0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+            -0.5f,  0.5f, -0.5f
         };
 
-        uint32_t quad_buffer;
-        glGenBuffers(1, &quad_buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, quad_buffer);
+        static std::vector<uint32_t> indices = {
+            // Front face
+            0, 1, 2, 2, 3, 0,
+            // Back face
+            4, 5, 6, 6, 7, 4,
+            // Left face
+            0, 3, 7, 7, 4, 0,
+            // Right face
+            1, 2, 6, 6, 5, 1,
+            // Top face
+            3, 2, 6, 6, 7, 3,
+            // Bottom face
+            0, 1, 5, 5, 4, 0
+        };
+
+        uint32_t vao, vbo, ebo;
+        glGenVertexArrays(1, &vao);
+        glGenBuffers(1, &vbo);
+        glGenBuffers(1, &ebo);
+
+        glBindVertexArray(vao);
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indices.size(), indices.data(), GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
         glEnableVertexAttribArray(0);
 
         std::string vertShader = ReadFile("../res/shaders/vert.glsl");
@@ -72,21 +102,36 @@ namespace Core {
         unsigned int shader = CreateShader(vertShader, fragShader);
         glUseProgram(shader);
 
-        int timeLocation = glGetUniformLocation(shader, "time");
+        // Set up transformations
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+        int modelLoc = glGetUniformLocation(shader, "model");
+        int viewLoc = glGetUniformLocation(shader, "view");
+        int projLoc = glGetUniformLocation(shader, "projection");
 
         while (!glfwWindowShouldClose(m_Window)) {
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            // Rotate the cube over time
             float timeValue = static_cast<float>(glfwGetTime());
-            glUniform1f(timeLocation, timeValue);
+            model = glm::rotate(glm::mat4(1.0f), timeValue, glm::vec3(0.5f, 1.0f, 0.0f));
 
-            DrawGeometrie();
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+            glBindVertexArray(vao);
+            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
 
             glfwSwapBuffers(m_Window);
             glfwPollEvents();
         }
 
-        glDeleteBuffers(1, &quad_buffer);
+        glDeleteVertexArrays(1, &vao);
+        glDeleteBuffers(1, &vbo);
+        glDeleteBuffers(1, &ebo);
         glDeleteProgram(shader);
 
         if (m_Window) {
