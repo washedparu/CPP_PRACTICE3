@@ -11,5 +11,7 @@ int main() {
         return -1;
         
     engine->Run();
+
+    
     return EXIT_SUCCESS;
 }

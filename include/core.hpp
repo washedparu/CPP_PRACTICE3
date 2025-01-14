@@ -8,6 +8,8 @@
 #include <spdlog/spdlog.h>
 #include <iostream>
 #include <cstdlib> 
+#include <fstream>
+#include <sstream>
 #include "types.hpp"
 
 namespace Core {
