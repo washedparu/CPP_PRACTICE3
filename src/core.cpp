@@ -86,6 +86,7 @@ namespace Core {
             return;
         }
 
+
         unsigned int shader = CreateShader(vertShader, fragShader);
         glUseProgram(shader);
 
