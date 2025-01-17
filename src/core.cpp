@@ -1,9 +1,11 @@
 #include "core.hpp"
 
 
+
 namespace Core {
     GLFWwindow* Engine::m_Window = nullptr;
     std::vector<float> vertices;
+    std::vector<int> indicies;
 
     // Utility function to read shader files
     std::string Engine::ReadShaderFile(const std::string& filePath) {
@@ -17,6 +19,11 @@ namespace Core {
         buffer << file.rdbuf();
         return buffer.str();
     }
+
+    struct S {
+    std::string vertShader = Engine::ReadShaderFile("../res/shaders/vert.glsl");
+    std::string fragShader = Engine::ReadShaderFile("../res/shaders/frag.glsl");
+    }typedef Shaders; 
 
     // Initialize the application
     bool Engine::Init(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* shared) {
@@ -50,10 +57,11 @@ namespace Core {
     }
 
     void Engine::DrawGeometrie() {
-        glDrawArrays(GL_QUADS, 0, 4);
+        glDrawElements(GL_TRIANGLES, 6,GL_UNSIGNED_INT,nullptr);
     }
 
     void Engine::Run() {
+        Shaders shaders;
         if (!m_Window) {
             ERROR("Window is not initialized. Call Core::Init() first.");
             return;
@@ -62,32 +70,46 @@ namespace Core {
         INFO("GL version: {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 
         vertices.reserve(8);
+        indicies.reserve(6);
+
         vertices.insert(vertices.end(), {
-            -0.75f, -0.75f,
-             0.75f, -0.75f,
-             0.75f,  0.75f,
-            -0.75f,  0.75f
+            -0.5f, -0.5f,
+             0.5f, -0.5f,
+             0.5f, 0.5f,
+            -0.5f, 0.5f,
         });
 
-        uint32_t quad_buffer;
-        glGenBuffers(1, &quad_buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, quad_buffer);
+        indicies.insert(indicies.end(), {
+             0,1,2,
+             2,3,0,
+        });
+
+        uint32_t buffer;
+        glGenBuffers(1, &buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+
+
 
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
         glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);  // Unbind buffer
+        glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
-        std::string vertShader = ReadShaderFile("../res/shaders/vert.glsl");
-        std::string fragShader = ReadShaderFile("../res/shaders/frag.glsl");
 
-        if (vertShader.empty() || fragShader.empty()) {
+        uint32_t ibo;
+
+        glGenBuffers(1, &ibo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indicies.size(), indicies.data(), GL_STATIC_DRAW);
+
+
+        if (shaders.vertShader.empty() || shaders.fragShader.empty()) {
             ERROR("Failed to load shaders. Exiting application.");
             return;
         }
 
 
-        unsigned int shader = CreateShader(vertShader, fragShader);
+        unsigned int shader = CreateShader(shaders.vertShader, shaders.fragShader);
         glUseProgram(shader);
 
         int timeLocation = glGetUniformLocation(shader, "time");

@@ -31,7 +31,7 @@ public:
     // Compile Shader
     uint32_t compileShader(const std::string& source, uint32_t type);
     // Read shader from file
-    std::string ReadShaderFile(const std::string& filePath);
+    static std::string ReadShaderFile(const std::string& filePath);
 
 };
 
