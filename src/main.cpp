@@ -1,17 +1,15 @@
 #include <core.hpp>
 
+
 int main() {
     using namespace Core;
 
 
-   auto engine = std::make_unique<Engine>();
+    Engine engine;
+    if(!engine.Init(800,600,"OpenGL",NULL,NULL))
+        return FAILED;
 
-
-    if(!engine->Init(1000,800,"OpenGL",NULL,NULL)) 
-        return -1;
-        
-    engine->Run();
-
+    engine.Run();
     
     return EXIT_SUCCESS;
 }

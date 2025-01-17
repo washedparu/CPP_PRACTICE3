@@ -10,14 +10,14 @@
 #include <cstdlib> 
 #include <fstream>
 #include <sstream>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+
 
 #include "types.hpp"
 namespace Core {
  class Engine { // Called engine for NOW.
 public:
+    static GLFWwindow* m_Window; 
+
     // Initialize the application
     bool Init(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* shared);
     // Run the main loop
@@ -30,7 +30,9 @@ public:
     uint32_t CreateShader(const std::string& vertShader, const std::string& fragShader);
     // Compile Shader
     uint32_t compileShader(const std::string& source, uint32_t type);
-    static GLFWwindow* m_Window; 
+    // Read shader from file
+    std::string ReadShaderFile(const std::string& filePath);
+
 };
 
     class Math {
