@@ -71,7 +71,6 @@ namespace Core {
 
         vertices.reserve(8);
         indicies.reserve(6);
-
         vertices.insert(vertices.end(), {
             -0.5f, -0.5f,
              0.5f, -0.5f,
