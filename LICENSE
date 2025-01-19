@@ -1,5 +1,7 @@
 MIT License
-
+    float r = abs(sin(u_color));
+    float g = abs(sin(u_color + 2.0));
+    float b = abs(sin(u_color + 4.0));
 Copyright (c) 2025 Crimson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

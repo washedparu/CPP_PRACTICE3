@@ -82,6 +82,7 @@ namespace Core {
 
         indices = { 0, 1, 2, 2, 3, 0 };
 
+
         // Create Vertex Buffer Object (VBO)
         uint32_t vbo;
         glGenBuffers(1, &vbo);
@@ -101,6 +102,7 @@ namespace Core {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
+    
         // Check and load shaders
         if (shaders.vertShader.empty() || shaders.fragShader.empty()) {
             ERROR("Failed to load shaders. Exiting application.");
@@ -109,16 +111,14 @@ namespace Core {
 
         unsigned int shader = CreateShader(shaders.vertShader, shaders.fragShader);
         glUseProgram(shader);
-
-        int timeLocation = glGetUniformLocation(shader, "time");
+        int colorLoc = glGetUniformLocation(shader, "u_color");
 
         while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT);
             
             // Update time uniform
             float timeValue = static_cast<float>(glfwGetTime());
-            glUniform1f(timeLocation, timeValue);
-
+            glUniform1f(colorLoc, timeValue);
             // Draw the geometry
             DrawGeometrie();
 
