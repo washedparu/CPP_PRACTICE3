@@ -114,7 +114,7 @@ namespace Core {
 
         while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT);
-            gl
+            
             // Update time uniform
             float timeValue = static_cast<float>(glfwGetTime());
             glUniform1f(timeLocation, timeValue);
