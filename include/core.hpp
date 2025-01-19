@@ -2,21 +2,17 @@
 #define CORE_HPP
 
 
-// Includes
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <spdlog/spdlog.h>
-#include <iostream>
-#include <cstdlib> 
-#include <fstream>
-#include <sstream>
-
 
 #include "types.hpp"
-namespace Core {
+namespace Core 
+{
  class Engine { // Called engine for NOW.
 public:
-    static GLFWwindow* m_Window; 
+    static GLFWwindow* window; 
+    static void ClearError();
+    static bool LogCall();
+    
+
 
     // Initialize the application
     bool Init(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* shared);

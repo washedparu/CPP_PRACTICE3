@@ -1,13 +1,16 @@
-#include "core.hpp"
-
-
+#include <core.hpp>
 
 namespace Core {
-    GLFWwindow* Engine::m_Window = nullptr;
+    GLFWwindow* Engine::window = nullptr;
     std::vector<float> vertices;
-    std::vector<int> indicies;
+    std::vector<int> indices;
 
-    // Utility function to read shader files
+    // Clear all OpenGL errors
+    void Engine::ClearError() {
+        while (glGetError() != GL_NO_ERROR);
+    }
+
+
     std::string Engine::ReadShaderFile(const std::string& filePath) {
         std::ifstream file(filePath);
         if (!file.is_open()) {
@@ -21,9 +24,9 @@ namespace Core {
     }
 
     struct S {
-    std::string vertShader = Engine::ReadShaderFile("../res/shaders/vert.glsl");
-    std::string fragShader = Engine::ReadShaderFile("../res/shaders/frag.glsl");
-    }typedef Shaders; 
+        std::string vertShader = Engine::ReadShaderFile("../res/shaders/vert.glsl");
+        std::string fragShader = Engine::ReadShaderFile("../res/shaders/frag.glsl");
+    } typedef Shaders;
 
     // Initialize the application
     bool Engine::Init(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* shared) {
@@ -35,20 +38,20 @@ namespace Core {
 
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-        m_Window = glfwCreateWindow(width, height, title, monitor, shared);
-        if (!m_Window) {
+        window = glfwCreateWindow(width, height, title, monitor, shared);
+        if (!window) {
             glfwTerminate();
             ERROR("Couldn't create window!");
             return false;
         }
         INFO("Created window successfully.");
 
-        glfwMakeContextCurrent(m_Window);
+        glfwMakeContextCurrent(window);
 
         glewExperimental = GL_TRUE;
         if (glewInit() != GLEW_OK) {
             ERROR("Couldn't initialize GLEW!");
-            glfwDestroyWindow(m_Window);
+            glfwDestroyWindow(window);
             glfwTerminate();
             return false;
         }
@@ -57,87 +60,87 @@ namespace Core {
     }
 
     void Engine::DrawGeometrie() {
-        glDrawElements(GL_TRIANGLES, 6,GL_UNSIGNED_INT,nullptr);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
     }
 
     void Engine::Run() {
         Shaders shaders;
-        if (!m_Window) {
+        if (!window) {
             ERROR("Window is not initialized. Call Core::Init() first.");
             return;
         }
 
         INFO("GL version: {}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 
-        vertices.reserve(8);
-        indicies.reserve(6);
-        vertices.insert(vertices.end(), {
+        // Define vertices and indices
+        vertices = {
             -0.5f, -0.5f,
              0.5f, -0.5f,
-             0.5f, 0.5f,
-            -0.5f, 0.5f,
-        });
+             0.5f,  0.5f,
+            -0.5f,  0.5f
+        };
 
-        indicies.insert(indicies.end(), {
-             0,1,2,
-             2,3,0,
-        });
+        indices = { 0, 1, 2, 2, 3, 0 };
 
-        uint32_t buffer;
-        glGenBuffers(1, &buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        // Create Vertex Buffer Object (VBO)
+        uint32_t vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-
-
+        // Create Vertex Array Object (VAO)
+        uint32_t vao;
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
         glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
-
+        // Create Index Buffer Object (IBO)
         uint32_t ibo;
-
         glGenBuffers(1, &ibo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indicies.size(), indicies.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
-
+        // Check and load shaders
         if (shaders.vertShader.empty() || shaders.fragShader.empty()) {
             ERROR("Failed to load shaders. Exiting application.");
             return;
         }
-
 
         unsigned int shader = CreateShader(shaders.vertShader, shaders.fragShader);
         glUseProgram(shader);
 
         int timeLocation = glGetUniformLocation(shader, "time");
 
-        while (!glfwWindowShouldClose(m_Window)) {
+        while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT);
-
-            // Set the time uniform
+            gl
+            // Update time uniform
             float timeValue = static_cast<float>(glfwGetTime());
             glUniform1f(timeLocation, timeValue);
 
+            // Draw the geometry
             DrawGeometrie();
 
-            glfwSwapBuffers(m_Window);
+            glfwSwapBuffers(window);
             glfwPollEvents();
         }
-        INFO("Cleaned: \n");
-        INFO("Closed window.\n");
-        glfwDestroyWindow(m_Window);
-        INFO("Terminated GLFW.\n");
-        glfwTerminate();
-        INFO("Deleted shader.\n");
+
+        // Cleanup
+        glDeleteBuffers(1, &vbo);
+        glDeleteBuffers(1, &ibo);
+        glDeleteVertexArrays(1, &vao);
         glDeleteProgram(shader);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+
+        INFO("Application terminated successfully.");
     }
 
     Engine::~Engine() {
-        if (m_Window) {
-            glfwDestroyWindow(m_Window);
-            m_Window = nullptr;  // Avoid dangling pointers
+        if (window) {
+            glfwDestroyWindow(window);
+            window = nullptr;
         }
         glfwTerminate();
     }
@@ -147,7 +150,6 @@ namespace Core {
         const char* src = source.c_str();
         glShaderSource(id, 1, &src, nullptr);
         glCompileShader(id);
-
         int result;
         glGetShaderiv(id, GL_COMPILE_STATUS, &result);
         if (!result) {
