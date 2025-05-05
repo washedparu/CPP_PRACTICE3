@@ -22,6 +22,7 @@ find_package(glfw3 REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(spdlog REQUIRED)
 
+
 target_link_libraries(OpenGL
     OpenGL::GL
     glfw

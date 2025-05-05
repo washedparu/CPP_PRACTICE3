@@ -19,7 +19,7 @@ public:
     // Run the main loop
     void Run();
     // Draw Geometry
-    void DrawGeometrie();
+    void DrawGeometry();
     // Destructor to clean up resources
     ~Engine();
     // Create Shader 
