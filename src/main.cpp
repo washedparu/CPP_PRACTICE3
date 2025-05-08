@@ -1,17 +1,12 @@
 #include <core.hpp>
 
-
-
 int main() {
-    using namespace Core;
-
-
-    Engine engine;
-    if(!engine.Init(800,600,"OpenGL",NULL,NULL))
-        return FAILED;
-
-    std::cout << '\n' <<glfwGetTime() << '\n';
+    Core::Engine engine;
+    
+    engine.Init(100, 800, "Simple",nullptr, nullptr);
+    
     engine.Run();
+   
     
     return EXIT_SUCCESS;
 }
