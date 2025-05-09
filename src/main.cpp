@@ -2,10 +2,9 @@
 
 int main() {
     Core::Engine engine;
-    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 
 
-    engine.Init(1000,800,"Simple",monitor, nullptr);
+    engine.Init(1000,800,"Simple",nullptr, nullptr);
     
     engine.Run();
     
