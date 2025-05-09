@@ -3,14 +3,12 @@
 
 
 
-#include "types.hpp"
+#include "renderer.h"
 namespace Core 
 {
  class Engine { // Called engine for NOW.
 public:
     static GLFWwindow* window; 
-    static void ClearError();
-    static bool LogCall();
     
 
 

@@ -1,9 +1,10 @@
 #include <core.hpp>
+#include <renderer.h>
+#include <VertexBuffer.h>
+#include <IndexBuffer.h>
 
 namespace Core {
-    GLFWwindow* Engine::window = nullptr;
-    std::vector<float> vertices;
-    std::vector<int> indices;
+    GLFWwindow* Engine::window = nullptr;;
 
  
 
@@ -54,9 +55,7 @@ namespace Core {
         return true;
     }
 
-    void Engine::DrawGeometry() {
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-    }
+    
 
     void Engine::Run() {
         Shaders shaders;
@@ -64,19 +63,17 @@ namespace Core {
             ERROR("Window is not initialized. Call Core::Init() first.");
         }
 
-        vertices = {
+        float vertices[8] = {
             -0.5f, -0.5f,
              0.5f, -0.5f,
              0.5f,  0.5f,
             -0.5f,  0.5f
         };
 
-        indices = {0,1,2,2,3};
+        unsigned int indices[5] = {0,1,2,2,3};
 
-        unsigned int vbo;
-        GLCall(glGenBuffers(1, &vbo));
-        GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-        GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW));
+        
+        VertexBuffer vb(vertices, 8 * sizeof(float));
 
         unsigned int vao;
         GLCall(glGenVertexArrays(1, &vao));
@@ -84,10 +81,7 @@ namespace Core {
         GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr));
         GLCall(glEnableVertexAttribArray(0));
 
-        unsigned int ibo;
-        GLCall(glGenBuffers(1, &ibo));
-        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
-        GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW));
+        IndexBuffer ib(indices, 6);
 
         if (shaders.vertShader.empty() || shaders.fragShader.empty()) {
             ERROR("Failed to load shaders. Exiting application.");
@@ -110,14 +104,19 @@ namespace Core {
             if(timeValue == 0.0) ERROR("TimeValue is set to {}",timeValue);
 
             GLCall(glUniform1f(colorLoc, timeValue));
-            DrawGeometry();
+            glBindVertexArray(vao);
+            vb.Bind();
+            ib.Bind();
+
+
+            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
 
-        GLCall(glDeleteBuffers(1, &vbo));
-        GLCall(glDeleteBuffers(1, &ibo));
+        vb.unBind();
+        ib.unBind();
         GLCall(glDeleteVertexArrays(1, &vao));
         GLCall(glDeleteProgram(shader));
         glfwDestroyWindow(window);

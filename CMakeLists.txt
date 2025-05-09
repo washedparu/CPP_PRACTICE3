@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 file(GLOB_RECURSE src "src/*.cpp")
 
 # Include Directory
-include_directories(include)
+include_directories()
 
 # Add the executable
 add_executable(Simple ${src})
