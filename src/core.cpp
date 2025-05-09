@@ -5,9 +5,7 @@ namespace Core {
     std::vector<float> vertices;
     std::vector<int> indices;
 
-    void Engine::ClearError() {
-        while (glGetError() != GL_NO_ERROR);
-    }
+ 
 
     // Returns a string that has the file content
     std::string Engine::ReadShaderFile(const std::string& filePath) {
@@ -36,7 +34,7 @@ namespace Core {
         INFO("GLFW initialized successfully.");
 
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-       
+
         window = glfwCreateWindow(width, height, title, monitor, shared);
         if (!window) {
             glfwTerminate();
@@ -45,29 +43,27 @@ namespace Core {
         }
         INFO("Created window successfully.");
 
-
         glfwMakeContextCurrent(window);
 
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
             ERROR("Failed to initialize GLAD");
             return false;
         }
-        INFO("GLAD initialized.");     
+        INFO("GLAD initialized.");
 
         return true;
     }
 
     void Engine::DrawGeometry() {
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
     }
 
     void Engine::Run() {
         Shaders shaders;
         if (!window) {
             ERROR("Window is not initialized. Call Core::Init() first.");
-            return;
         }
-        
+
         vertices = {
             -0.5f, -0.5f,
              0.5f, -0.5f,
@@ -75,58 +71,57 @@ namespace Core {
             -0.5f,  0.5f
         };
 
-        indices = {0,1,2,2,3,0};
+        indices = {0,1,2,2,3};
 
-        uint32_t vbo;
-        glGenBuffers(1, &vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+        unsigned int vbo;
+        GLCall(glGenBuffers(1, &vbo));
+        GLCall(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+        GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices.size(), vertices.data(), GL_STATIC_DRAW));
 
-        uint32_t vao;
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
-        glEnableVertexAttribArray(0);
+        unsigned int vao;
+        GLCall(glGenVertexArrays(1, &vao));
+        GLCall(glBindVertexArray(vao));
+        GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr));
+        GLCall(glEnableVertexAttribArray(0));
 
-        uint32_t ibo;
-        glGenBuffers(1, &ibo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * indices.size(), indices.data(), GL_STATIC_DRAW);
+        unsigned int ibo;
+        GLCall(glGenBuffers(1, &ibo));
+        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+        GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW));
 
         if (shaders.vertShader.empty() || shaders.fragShader.empty()) {
             ERROR("Failed to load shaders. Exiting application.");
             return;
         }
 
-        uint32_t shader = CreateShader(shaders.vertShader, shaders.fragShader);
+        unsigned int shader = CreateShader(shaders.vertShader, shaders.fragShader);
         if (!shader) {
             ERROR("Shader program creation failed.");
             return;
         }
 
-        glUseProgram(shader);
+        GLCall(glUseProgram(shader));
         int colorLoc = glGetUniformLocation(shader, "u_color");
 
         while (!glfwWindowShouldClose(window)) {
-            glClear(GL_COLOR_BUFFER_BIT);
+            GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
             float timeValue = static_cast<float>(glfwGetTime());
-            glUniform1f(colorLoc, timeValue);
+            if(timeValue == 0.0) ERROR("TimeValue is set to {}",timeValue);
 
+            GLCall(glUniform1f(colorLoc, timeValue));
             DrawGeometry();
 
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
 
-        glDeleteBuffers(1, &vbo);
-        glDeleteBuffers(1, &ibo);
-        glDeleteVertexArrays(1, &vao);
-        glDeleteProgram(shader);
+        GLCall(glDeleteBuffers(1, &vbo));
+        GLCall(glDeleteBuffers(1, &ibo));
+        GLCall(glDeleteVertexArrays(1, &vao));
+        GLCall(glDeleteProgram(shader));
         glfwDestroyWindow(window);
         glfwTerminate();
-
-        INFO("Application terminated successfully.");
     }
 
     Engine::~Engine() {
@@ -134,48 +129,49 @@ namespace Core {
             glfwDestroyWindow(window);
             window = nullptr;
         }
+        INFO("Application terminated successfully.");
         glfwTerminate();
     }
 
-    uint32_t Engine::compileShader(const std::string& source, uint32_t type) {
-        uint32_t id = glCreateShader(type);
+    unsigned int Engine::compileShader(const std::string& source, unsigned int type) {
+        unsigned int id = glCreateShader(type);
         const char* src = source.c_str();
-        glShaderSource(id, 1, &src, nullptr);
-        glCompileShader(id);
+        GLCall(glShaderSource(id, 1, &src, nullptr));
+        GLCall(glCompileShader(id));
 
         int result;
-        glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+        GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
         if (!result) {
             int length;
-            glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+            GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
 
             std::vector<char> message(length);
-            glGetShaderInfoLog(id, length, &length, message.data());
+            GLCall(glGetShaderInfoLog(id, length, &length, message.data()));
             ERROR("Failed to compile {} shader", (type == GL_VERTEX_SHADER ? "vertex" : "fragment"));
             ERROR("{}", message.data());
-            glDeleteShader(id);
+            GLCall(glDeleteShader(id));
             return 0;
         }
 
         return id;
     }
 
-    uint32_t Engine::CreateShader(const std::string& vertShader, const std::string& fragShader) {
-        uint32_t program = glCreateProgram();
-        uint32_t vs = compileShader(vertShader, GL_VERTEX_SHADER);
-        uint32_t fs = compileShader(fragShader, GL_FRAGMENT_SHADER);
+    unsigned int Engine::CreateShader(const std::string& vertShader, const std::string& fragShader) {
+        unsigned int program = glCreateProgram();
+        unsigned int vs = compileShader(vertShader, GL_VERTEX_SHADER);
+        unsigned int fs = compileShader(fragShader, GL_FRAGMENT_SHADER);
         if (!vs || !fs) {
-            glDeleteProgram(program);
+            GLCall(glDeleteProgram(program));
             return 0;
         }
 
-        glAttachShader(program, vs);
-        glAttachShader(program, fs);
-        glLinkProgram(program);
-        glValidateProgram(program);
+        GLCall(glAttachShader(program, vs));
+        GLCall(glAttachShader(program, fs));
+        GLCall(glLinkProgram(program));
+        GLCall(glValidateProgram(program));
 
-        glDeleteShader(vs);
-        glDeleteShader(fs);
+        GLCall(glDeleteShader(vs));
+        GLCall(glDeleteShader(fs));
 
         return program;
     }

@@ -1,0 +1,7 @@
+: && /usr/lib64/ccache/c++  -Wl,--dependency-file=CMakeFiles/Simple.dir/link.d CMakeFiles/Simple.dir/src/core.cpp.o CMakeFiles/Simple.dir/src/glad.cpp.o CMakeFiles/Simple.dir/src/main.cpp.o -o Simple  libglad.a  /usr/lib64/libglfw.so.3.4  /usr/lib64/libGL.so  /usr/lib64/libspdlog.so.1.15.2  /usr/lib64/libfmt.so.11.1.4 && :
+/usr/bin/ld: CMakeFiles/Simple.dir/src/main.cpp.o: in function `GLClearError()':
+main.cpp:(.text+0x0): multiple definition of `GLClearError()'; CMakeFiles/Simple.dir/src/core.cpp.o:core.cpp:(.text+0x0): first defined here
+/usr/bin/ld: CMakeFiles/Simple.dir/src/main.cpp.o: in function `GLLogCall(char const*, char const*, int)':
+main.cpp:(.text+0x1b): multiple definition of `GLLogCall(char const*, char const*, int)'; CMakeFiles/Simple.dir/src/core.cpp.o:core.cpp:(.text+0x1b): first defined here
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
