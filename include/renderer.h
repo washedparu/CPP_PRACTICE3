@@ -28,7 +28,7 @@
     x;\
     ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 
-static void GLClearError();
+void GLClearError();
 
-static bool GLLogCall(const char* function, const char* file, int line);
+bool GLLogCall(const char* function, const char* file, int line);
 

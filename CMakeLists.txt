@@ -11,10 +11,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 file(GLOB_RECURSE src "src/*.cpp")
 
 # Include Directory
-include_directories()
+include_directories(include)
 
 # Add the executable
-add_executable(Simple ${src})
+add_executable(Simple 
+    src/main.cpp 
+    src/core.cpp 
+    src/VertexBuffer.cpp 
+    src/IndexBuffer.cpp 
+    src/glad.cpp 
+    src/renderer.cpp  
+)
 
 # Adding glad because glew is making me go insane
 add_library(glad STATIC src/glad.cpp)

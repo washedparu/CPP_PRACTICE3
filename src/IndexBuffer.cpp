@@ -18,11 +18,11 @@ IndexBuffer::~IndexBuffer() {
 }
 
 void IndexBuffer::Bind() const {
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BARRIER_BIT, m_RendererID));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
 }
 
 void IndexBuffer::unBind() const {
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BARRIER_BIT, 0));    
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));    
 }
 
 inline unsigned int IndexBuffer::GetCount() const {
