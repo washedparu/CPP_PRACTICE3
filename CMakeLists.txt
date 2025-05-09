@@ -17,7 +17,7 @@ include_directories(include)
 add_executable(Simple ${src})
 
 # Adding glad because glew is making me go insane
-add_library(glad STATIC src/glad.c)
+add_library(glad STATIC src/glad.cpp)
 target_include_directories(glad PUBLIC include)
 
 # Link libraries

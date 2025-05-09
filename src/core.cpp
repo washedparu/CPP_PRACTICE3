@@ -28,14 +28,15 @@ namespace Core {
     };
 
     bool Engine::Init(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* shared) {
+
         if (!glfwInit()) {
             ERROR("Failed initializing GLFW.");
             return false;
         }
         INFO("GLFW initialized successfully.");
 
-            glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
+        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+       
         window = glfwCreateWindow(width, height, title, monitor, shared);
         if (!window) {
             glfwTerminate();
@@ -43,6 +44,7 @@ namespace Core {
             return false;
         }
         INFO("Created window successfully.");
+
 
         glfwMakeContextCurrent(window);
 
@@ -73,7 +75,7 @@ namespace Core {
             -0.5f,  0.5f
         };
 
-        indices = { 0, 1, 2, 2, 3, 0 };
+        indices = {0,1,2,2,3,0};
 
         uint32_t vbo;
         glGenBuffers(1, &vbo);
@@ -162,7 +164,6 @@ namespace Core {
         uint32_t program = glCreateProgram();
         uint32_t vs = compileShader(vertShader, GL_VERTEX_SHADER);
         uint32_t fs = compileShader(fragShader, GL_FRAGMENT_SHADER);
-
         if (!vs || !fs) {
             glDeleteProgram(program);
             return 0;
