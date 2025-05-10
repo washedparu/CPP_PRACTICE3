@@ -21,7 +21,8 @@ add_executable(Simple
     src/IndexBuffer.cpp 
     src/VertexArray.cpp
     src/glad.cpp 
-    src/renderer.cpp  
+    src/renderer.cpp 
+    src/Shader.cpp
 )
 
 # Adding glad because glew is making me go insane

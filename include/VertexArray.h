@@ -8,6 +8,9 @@ class VertexArray
 private:
     unsigned int m_RendererID;
 public:
+    VertexArray(const VertexArray& copy) {
+        printf("Copied VertexArray\n");
+    }
     VertexArray();
     ~VertexArray();
     void addBuffer(const VertexBuffer& vb, const BufferLayout& layout);

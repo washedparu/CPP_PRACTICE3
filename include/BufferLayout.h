@@ -24,7 +24,9 @@ private:
     std::vector<vbe> m_Elements;
 public:
     BufferLayout() { this->m_Stride = 0; }
-
+    BufferLayout(const BufferLayout& copy) {
+        printf("Copied BufferLayout!\n");
+    }
     template<typename T>
     void push(unsigned int count);
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 class VertexBuffer
 {
@@ -9,6 +10,9 @@ public:
     VertexBuffer(const void *data, unsigned int size);
     ~VertexBuffer();
 
+    VertexBuffer(const VertexBuffer& copy) {
+        printf("Copied VertexBuffer\n");
+    }
     void Bind() const;
     void unBind() const;
 };

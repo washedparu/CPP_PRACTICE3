@@ -2,6 +2,11 @@
 #include <renderer.h>
 
 
+IndexBuffer::IndexBuffer(const IndexBuffer& copy) {
+    printf("Copied IndexBuffer\n");
+}
+
+
 IndexBuffer::IndexBuffer(const unsigned int *data, unsigned int count) 
     : m_Count(count)
 {
