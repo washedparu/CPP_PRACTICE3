@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Simple VERSION 1.0)
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Add source files
@@ -20,7 +20,13 @@ add_executable(Simple
     src/VertexBuffer.cpp 
     src/IndexBuffer.cpp 
     src/glad.cpp 
+<<<<<<< HEAD
     src/renderer.cpp  
+=======
+    src/renderer.cpp
+    src/renderer.cpp
+    src/VertexArray.cpp
+>>>>>>> 60f175a (More errors :))
 )
 
 # Adding glad because glew is making me go insane

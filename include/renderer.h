@@ -9,7 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <csignal>
-
+#include <vector>
 
 //macros
 

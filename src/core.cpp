@@ -2,6 +2,8 @@
 #include <renderer.h>
 #include <VertexBuffer.h>
 #include <IndexBuffer.h>
+#include <VertexArray.h>
+#include <BufferLayout.h>
 
 namespace Core {
     GLFWwindow* Engine::window = nullptr;;
@@ -72,14 +74,13 @@ namespace Core {
 
         unsigned int indices[5] = {0,1,2,2,3};
 
+    
         
+        VertexArray va;
         VertexBuffer vb(vertices, 8 * sizeof(float));
+        BufferLayout layout;
+        va.addBuffer(vb, layout);
 
-        unsigned int vao;
-        GLCall(glGenVertexArrays(1, &vao));
-        GLCall(glBindVertexArray(vao));
-        GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr));
-        GLCall(glEnableVertexAttribArray(0));
 
         IndexBuffer ib(indices, 6);
 
@@ -104,20 +105,17 @@ namespace Core {
             if(timeValue == 0.0) ERROR("TimeValue is set to {}",timeValue);
 
             GLCall(glUniform1f(colorLoc, timeValue));
-            glBindVertexArray(vao);
             vb.Bind();
             ib.Bind();
 
 
             GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
 
         vb.unBind();
         ib.unBind();
-        GLCall(glDeleteVertexArrays(1, &vao));
         GLCall(glDeleteProgram(shader));
         glfwDestroyWindow(window);
         glfwTerminate();
