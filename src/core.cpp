@@ -116,7 +116,7 @@ namespace Core {
 
         vb.unBind();
         ib.unBind();
-        GLCall(glDeleteProgram(shader));
+        GLCall(glDeleteProgram(shader));  
         glfwDestroyWindow(window);
         glfwTerminate();
     }
