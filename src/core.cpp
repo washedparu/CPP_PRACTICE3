@@ -76,12 +76,14 @@ namespace Core {
         unsigned int indices[5] = {0,1,2,2,3};
 
     
+        unsigned int vao;
+        GLCall(glGenBuffers(1, &vao));
+        GLCall(glBindVertexArray(vao));
         
         VertexArray va;
         VertexBuffer vb(vertices, 8 * sizeof(float));
         BufferLayout layout;
         va.addBuffer(vb, layout);
-
 
         IndexBuffer ib(indices, 6);
 
@@ -115,6 +117,7 @@ namespace Core {
             glfwPollEvents();
         }
 
+        glDeleteVertexArrays(1,&vao);
         vb.unBind();
         ib.unBind();
         GLCall(glDeleteProgram(shader));  

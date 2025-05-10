@@ -23,29 +23,31 @@ private:
     int m_Stride = 0;
     std::vector<vbe> m_Elements;
 public:
-    BufferLayout() = default;
+    BufferLayout() { this->m_Stride = 0; }
 
     template<typename T>
-    void push(int count);
+    void push(unsigned int count);
 
     const std::vector<vbe>& GetElements() const { return m_Elements; }
     int GetStride() const { return m_Stride; }
 };
 
+
+
 template<>
-inline void BufferLayout::push<float>(int count) {
+inline void BufferLayout::push<float>(unsigned int count) {
     m_Elements.push_back({GL_FLOAT, static_cast<unsigned int>(count), false});
-    m_Stride += vbe::getTypeSize(GL_FLOAT);
+    m_Stride += vbe::getTypeSize(GL_FLOAT) * count;
 }
 
 template<>
-inline void BufferLayout::push<unsigned int>(int count) {
+inline void BufferLayout::push<unsigned int>(unsigned int count) {
     m_Elements.push_back({GL_UNSIGNED_INT, static_cast<unsigned int>(count), GL_FALSE});
-    m_Stride += vbe::getTypeSize(GL_UNSIGNED_INT);
+    m_Stride += vbe::getTypeSize(GL_UNSIGNED_INT) * count;
 }
 
 template<>
-inline void BufferLayout::push<unsigned char>(int count) {
+inline void BufferLayout::push<unsigned char>(unsigned int count) {
     m_Elements.push_back({GL_UNSIGNED_BYTE, static_cast<unsigned int>(count), GL_TRUE});
-    m_Stride += vbe::getTypeSize(GL_UNSIGNED_BYTE);
+    m_Stride += vbe::getTypeSize(GL_UNSIGNED_BYTE) * count;
 }
