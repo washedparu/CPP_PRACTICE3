@@ -63,6 +63,7 @@ namespace Core {
         Shaders shaders;
         if (!window) {
             ERROR("Window is not initialized. Call Core::Init() first.");
+            Init(400,400,"Default",nullptr,nullptr);
         }
 
         float vertices[8] = {

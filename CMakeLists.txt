@@ -20,13 +20,7 @@ add_executable(Simple
     src/VertexBuffer.cpp 
     src/IndexBuffer.cpp 
     src/glad.cpp 
-<<<<<<< HEAD
     src/renderer.cpp  
-=======
-    src/renderer.cpp
-    src/renderer.cpp
-    src/VertexArray.cpp
->>>>>>> 60f175a (More errors :))
 )
 
 # Adding glad because glew is making me go insane

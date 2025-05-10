@@ -8,9 +8,8 @@ class VertexArray
 private:
     unsigned int m_RendererID;
 public:
-    VertexArray(/* args */);
+    VertexArray();
     ~VertexArray();
-
     void addBuffer(const VertexBuffer& vb, const BufferLayout& layout);
 
     void Bind() const;
