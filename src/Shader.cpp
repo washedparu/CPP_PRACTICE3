@@ -92,11 +92,28 @@ void Shader::SetUniform1f(const std::string& name, float f1) {
 }
 
 
+void Shader::SetUniform2f(const std::string& name, float f1, float f2) {
+    GLCall(glUniform2f(GetUniformLoc(name), f1, f2));
+}
+
+
+void Shader::SetUniform3f(const std::string& name, float f1, float f2, float f3) {
+    GLCall(glUniform3f(GetUniformLoc(name), f1, f2, f3));
+}
+
+
 unsigned int Shader::GetUniformLoc(const std::string& name) {
+
+    if(m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) { 
+        return m_UniformLocationCache[name];
+    }
     GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
-    if(location == -1) {
+    if(location == -1) { 
         ERROR("Couldn't get uniform location\n");
         return -1;
     }
+    
+    m_UniformLocationCache[name] = location; 
+    
     return location;
 }

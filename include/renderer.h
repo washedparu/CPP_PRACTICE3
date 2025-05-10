@@ -10,6 +10,8 @@
 #include <sstream>
 #include <csignal>
 #include <vector>
+#include <unordered_map>
+
 
 //macros
 
@@ -26,7 +28,7 @@
 #define ASSERT(x) if (!(x)) raise(SIGTRAP)
 #define GLCall(x) GLClearError();\
     x;\
-    ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+    ASSERT(GLLogCall(#x, __FILE__, __LINE__ ))
 
 void GLClearError();
 

@@ -70,9 +70,7 @@ namespace Core {
 
         Shader shader("../res/shaders/shader.vert", "../res/shaders/shader.frag");
         shader.Bind();
-        
-        float time = glfwGetTime();
-        shader.SetUniform1f("u_color",time);
+
 
         va.unBind();
         vb.unBind();
@@ -84,9 +82,11 @@ namespace Core {
             GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
             shader.Bind();
-            shader.SetUniform1f("u_color", time);
+            float time = glfwGetTime();
+            shader.SetUniform1f("u_color",time);
             va.Bind();
             ib.Bind();
+            
 
             GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
             glfwSwapBuffers(window);
