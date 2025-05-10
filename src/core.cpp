@@ -73,13 +73,11 @@ namespace Core {
             -0.5f,  0.5f
         };
 
-        unsigned int indices[5] = {0,1,2,2,3};
+        unsigned int indices[6] = {0,1,2,2,3,0};
 
     
-        unsigned int vao;
-        GLCall(glGenBuffers(1, &vao));
-        GLCall(glBindVertexArray(vao));
-        
+
+
         VertexArray va;
         VertexBuffer vb(vertices, 8 * sizeof(float));
         BufferLayout layout;
@@ -103,6 +101,9 @@ namespace Core {
 
         while (!glfwWindowShouldClose(window)) {
             GLCall(glClear(GL_COLOR_BUFFER_BIT));
+            GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+
+
 
             float timeValue = static_cast<float>(glfwGetTime());
             if(timeValue == 0.0) ERROR("TimeValue is set to {}",timeValue);
@@ -110,14 +111,11 @@ namespace Core {
             GLCall(glUniform1f(colorLoc, timeValue));
             vb.Bind();
             ib.Bind();
-
-
             GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
 
-        glDeleteVertexArrays(1,&vao);
         vb.unBind();
         ib.unBind();
         GLCall(glDeleteProgram(shader));  
