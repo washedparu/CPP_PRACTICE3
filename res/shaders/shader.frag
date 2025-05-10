@@ -6,24 +6,22 @@ uniform float u_time;
 uniform vec2 u_resolution;
 
 void main() {
-    // Convert to Normalized Device Coordinates: (-1 to +1)
-    vec2 ndc = (gl_FragCoord.xy / u_resolution) * 2.0 - 1.0;
+    // Normalizes coordinates
+    vec2 uv = gl_FragCoord.xy / u_resolution;
+    
+    // Centers normalized coordinates vertically
+    float centeredY = uv.y - 0.5;
 
-    // Maintain aspect ratio by scaling x
-    ndc.x *= u_resolution.x / u_resolution.y;
+    // Horizontal wave centered
+    float wave = sin(uv.x * 20.0 + u_time * 2.0) * 0.1;
 
-    // Centered sine wave (horizontal)
-    float wave = sin(ndc.x * 10.0 + u_time * 2.0) * 0.1;
+    // Add wave to centeredY, then re-normalize
+    float y = centeredY + wave + 0.5;
 
-    // Gradient blend from deep ocean blue to light blue based on vertical position
-    float y = ndc.y + wave;
-
+    // Gradient from ocean blue (bottom) to light blue (top)
     vec3 deepBlue = vec3(0.0, 0.1, 0.3);
     vec3 lightBlue = vec3(0.4, 0.7, 1.0);
 
-    // Map y from [-1, 1] to [0, 1] for mixing
-    float gradient = clamp((y + 1.0) * 0.5, 0.0, 1.0);
-
-    vec3 finalColor = mix(deepBlue, lightBlue, gradient);
+    vec3 finalColor = mix(deepBlue, lightBlue, y);
     color = vec4(finalColor, 1.0);
 }
