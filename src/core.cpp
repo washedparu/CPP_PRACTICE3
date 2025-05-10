@@ -81,8 +81,8 @@ namespace Core {
         VertexArray va;
         VertexBuffer vb(vertices, 8 * sizeof(float));
         BufferLayout layout;
+        layout.push<float>(2);
         va.addBuffer(vb, layout);
-
         IndexBuffer ib(indices, 6);
 
         if (shaders.vertShader.empty() || shaders.fragShader.empty()) {
@@ -101,7 +101,6 @@ namespace Core {
 
         while (!glfwWindowShouldClose(window)) {
             GLCall(glClear(GL_COLOR_BUFFER_BIT));
-            GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
 
 
 
@@ -109,15 +108,13 @@ namespace Core {
             if(timeValue == 0.0) ERROR("TimeValue is set to {}",timeValue);
 
             GLCall(glUniform1f(colorLoc, timeValue));
-            vb.Bind();
+   
+            va.Bind();
             ib.Bind();
             GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
-
-        vb.unBind();
-        ib.unBind();
         GLCall(glDeleteProgram(shader));  
         glfwDestroyWindow(window);
         glfwTerminate();
