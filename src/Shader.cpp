@@ -1,7 +1,7 @@
 #include <Shader.h>
 
 Shader::Shader(const std::string& vertShaderPath, const std::string& fragShaderPath)  
-    : m_VertShaderPath(vertShaderPath), m_FragShaderPath(m_FragShaderPath) ,m_RendererID(0)
+    : m_VertShaderPath(vertShaderPath), m_FragShaderPath(fragShaderPath) ,m_RendererID(0)
 {
     ShaderPath src = ReadShaderFromFile(vertShaderPath, fragShaderPath);
     m_RendererID = CreateShader(src.VertShader, src.FragShader);
@@ -88,18 +88,13 @@ void Shader::UnBind() const {
 }
 
 void Shader::SetUniform1f(const std::string& name, float f1) {
-    int location = GetUniformLoc(name);
-    f1 = static_cast<float>(glfwGetTime());
-
-    if(f1 == 0.0) ERROR("TimeValue is set to {}",f1);
-
-    GLCall(glUniform1f(location, f1));
+    GLCall(glUniform1f(GetUniformLoc(name), f1));
 }
 
 
 unsigned int Shader::GetUniformLoc(const std::string& name) {
     GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()));
-    if(location = -1) {
+    if(location == -1) {
         ERROR("Couldn't get uniform location\n");
         return -1;
     }
