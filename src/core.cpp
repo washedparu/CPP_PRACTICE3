@@ -40,6 +40,9 @@ namespace Core {
     }
 
     
+    void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+        glViewport(0, 0, width, height);
+    }
 
     void Engine::Run() {
         if (!window) {
@@ -76,14 +79,20 @@ namespace Core {
         vb.unBind();
         ib.unBind();
         shader.UnBind();
-
+        int width, height;
+        glfwGetFramebufferSize(window, &width, &height);
+        
+        glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int width, int height) {
+            glViewport(0, 0, width, height);
+        });
 
         while (!glfwWindowShouldClose(window)) {
             GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
             shader.Bind();
             float time = glfwGetTime();
-            shader.SetUniform1f("u_color",time);
+            shader.SetUniform1f("u_time",time);
+            shader.SetUniform2f("u_resolution", static_cast<float>(width), static_cast<float>(height));
             va.Bind();
             ib.Bind();
             
@@ -95,7 +104,6 @@ namespace Core {
         glfwDestroyWindow(window);
         glfwTerminate();
     }
-
     Engine::~Engine() {
         if (window) {
             glfwDestroyWindow(window);
