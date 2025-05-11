@@ -76,7 +76,7 @@ namespace Core {
 
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
-        
+        Renderer renderer;
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow*, int width, int height) {
             glViewport(0, 0, width, height);
         });
@@ -90,8 +90,8 @@ namespace Core {
             shader.SetUniform2f("u_resolution", static_cast<float>(width), static_cast<float>(height));
             va.Bind();
             ib.Bind();
-
-            glDrawElements(GL_TRIANGLES, ib.GetCount(),GL_UNSIGNED_INT, nullptr);
+            renderer.DrawElements(va, ib, shader);
+            //glDrawElements(GL_TRIANGLES, ib.GetCount(),GL_UNSIGNED_INT, nullptr);
             glfwSwapBuffers(window);
             glfwPollEvents();
         } 
