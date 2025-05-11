@@ -12,6 +12,17 @@
 #include <vector>
 #include <unordered_map>
 
+// ASSERT macro 
+
+#define ASSERT(x) if (!(x)) raise(SIGTRAP)
+#define GLCall(x) GLClearError();\
+    x;\
+    ASSERT(GLLogCall(#x, __FILE__, __LINE__ ))
+
+void GLClearError();
+
+bool GLLogCall(const char* function, const char* file, int line);
+
 
 //macros
 
@@ -22,15 +33,4 @@
 #define CRITIC(fmt, ...) spdlog::critical(fmt, ##__VA_ARGS__)
 
 #define FAILED -1
-
-// ASSERT macro (f*cking finally.)
-
-#define ASSERT(x) if (!(x)) raise(SIGTRAP)
-#define GLCall(x) GLClearError();\
-    x;\
-    ASSERT(GLLogCall(#x, __FILE__, __LINE__ ))
-
-void GLClearError();
-
-bool GLLogCall(const char* function, const char* file, int line);
 

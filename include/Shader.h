@@ -1,5 +1,5 @@
 #pragma once
-#include <renderer.h>
+#include <Renderer.h>
 
 struct ShaderPath{
     std::string VertShader;

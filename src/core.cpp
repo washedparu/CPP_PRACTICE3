@@ -1,5 +1,5 @@
 #include <core.hpp>
-#include <renderer.h>
+#include <Renderer.h>
 #include <VertexBuffer.h>
 #include <IndexBuffer.h>
 #include <VertexArray.h>
@@ -79,6 +79,8 @@ namespace Core {
         vb.unBind();
         ib.unBind();
         shader.UnBind();
+
+        Renderer renderer;
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
         
@@ -95,15 +97,16 @@ namespace Core {
             shader.SetUniform2f("u_resolution", static_cast<float>(width), static_cast<float>(height));
             va.Bind();
             ib.Bind();
-            
 
-            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+            renderer.DrawElements(va, ib, shader);
             glfwSwapBuffers(window);
             glfwPollEvents();
         } 
         glfwDestroyWindow(window);
         glfwTerminate();
     }
+
+
     Engine::~Engine() {
         if (window) {
             glfwDestroyWindow(window);

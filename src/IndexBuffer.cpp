@@ -1,5 +1,5 @@
 #include <IndexBuffer.h>
-#include <renderer.h>
+#include <Renderer.h>
 
 
 IndexBuffer::IndexBuffer(const IndexBuffer& copy) {

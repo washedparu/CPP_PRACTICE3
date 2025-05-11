@@ -21,7 +21,7 @@ add_executable(Simple
     src/IndexBuffer.cpp 
     src/VertexArray.cpp
     src/glad.cpp 
-    src/renderer.cpp 
+    src/Renderer.cpp 
     src/Shader.cpp
 )
 
