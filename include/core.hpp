@@ -1,9 +1,11 @@
 #ifndef CORE_HPP
 #define CORE_HPP
 
-
-
 #include <Renderer.h>
+
+#include <VertexArray.h>
+#include <IndexBuffer.h>
+#include <Shader.h>
 namespace Core 
 {
  class Engine { // Called engine for NOW.

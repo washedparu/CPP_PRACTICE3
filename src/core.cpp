@@ -1,10 +1,4 @@
 #include <core.hpp>
-#include <Renderer.h>
-#include <VertexBuffer.h>
-#include <IndexBuffer.h>
-#include <VertexArray.h>
-#include <BufferLayout.h>
-#include <Shader.h>
 
 namespace Core {
     GLFWwindow* Engine::window = nullptr;;
@@ -80,7 +74,6 @@ namespace Core {
         ib.unBind();
         shader.UnBind();
 
-        Renderer renderer;
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
         
@@ -98,7 +91,7 @@ namespace Core {
             va.Bind();
             ib.Bind();
 
-            renderer.DrawElements(va, ib, shader);
+            glDrawElements(GL_TRIANGLES, ib.GetCount(),GL_UNSIGNED_INT, nullptr);
             glfwSwapBuffers(window);
             glfwPollEvents();
         } 

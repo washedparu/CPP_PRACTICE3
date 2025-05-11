@@ -13,7 +13,7 @@ public:
     void Bind() const;
     void unBind() const;
 
-    inline unsigned int GetCount() const;
+    unsigned int GetCount() const;
 };
 
 
